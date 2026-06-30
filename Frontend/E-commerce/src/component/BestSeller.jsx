@@ -4,58 +4,56 @@ import { ProductItem } from "./ProductItem";
 import { Spinner } from "./Spinner";
 
 export function BestSeller() {
-  const [BestSeller, setBestSeller] = useState([]);
-  const { products,loading } = useContext(ShopContext);
+  const [bestSeller, setBestSeller] = useState([]);
+  const { products, loading } = useContext(ShopContext);
 
   useEffect(() => {
     if (Array.isArray(products)) {
       const bestProduct = products.filter((item) => item.bestSeller);
-
       setBestSeller(bestProduct.reverse());
     }
   }, [products]);
 
+  return (
+    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50">
+      <div className="max-w-7xl mx-auto">
+        {/* Section Header */}
+        <div className="text-center mb-12">
+          <p className="text-amber-500 text-sm font-semibold tracking-widest uppercase mb-3">
+            — Top Picks —
+          </p>
+          <h2 className="section-title mb-4">Best Sellers</h2>
+          <p className="section-subtitle">
+            Our most-loved products, top-rated by customers for quality, style and value.
+          </p>
+        </div>
 
-  return loading ? (<div className="h-50 flex-col items-center text-center content-center justify-items-center">
-           <div className="flex justify-center items-center">
-              <p className="text-4xl mt-7 text-gray-900 font-mono "><span className="text-gray-600">Best</span>Seller</p>
-              <hr className="h-[2.5px] ml-2 mt-6 w-13 bg-gray-700"/>
+        {loading ? (
+          <div className="flex flex-col items-center gap-4 py-20">
+            <Spinner />
+            <p className="text-slate-400 text-sm">Loading products…</p>
           </div>
-          <p className="mt-10">product loading...</p>
-          <div className=" mb-10">
-          <Spinner/>
+        ) : bestSeller.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+            {bestSeller.map((item, index) => (
+              <div
+                key={item._id}
+                className="animate-fadeIn"
+                style={{ animationDelay: `${index * 60}ms`, animationFillMode: "both" }}
+              >
+                <ProductItem
+                  image={item.images[0]}
+                  name={item.name}
+                  price={item.price}
+                  productId={item._id}
+                />
+              </div>
+            ))}
           </div>
-      </div>) : 
-  ( <div>
-      <div className="flex justify-center items-center">
-        <p className="text-xl md:text-4xl mt-7 text-gray-900 font-mono ">
-          <span className="text-gray-600">BEST</span>SELLER
-        </p>
-        <hr className="h-[2.5px] ml-2 mt-6 w-13 bg-gray-700" />
-      </div>
-
-      <div className="my-6 text-center text-sm md:text-lg text-gray-600 max-w-3xl mx-auto">
-        <p>
-          Check out our top-selling products loved by customers worldwide. These
-          items are highly rated for quality, style, and value.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-2 mt-20 bg-slate-50  md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-2 gap-y-6">
-        {BestSeller ? (
-          BestSeller.map((item, index) => (
-            <ProductItem
-              image={item.images[0]}
-              name={item.name}
-              price={item.price}
-              productId={item._id}
-              key={index}
-            />
-          ))
         ) : (
-          <p></p>
+          <p className="text-center text-slate-400 py-20">No best sellers yet.</p>
         )}
       </div>
-    </div>
+    </section>
   );
 }

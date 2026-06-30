@@ -91,7 +91,7 @@ export function About() {
           ].map((member, index) => (
             <div key={index} className="flex flex-col items-center bg-white rounded-xl shadow-lg p-6 hover:shadow-2xl transition">
               <FaUserCircle className="text-7xl text-gray-400 mb-4" />
-              <h3 className="text-lg font-semibold">Ritesh Yadav</h3>
+              <h3 className="text-lg font-semibold">Shivendra Tarate</h3>
               <p className="text-gray-500">{member.role}</p>
             </div>
           ))}

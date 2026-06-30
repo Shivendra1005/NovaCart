@@ -12,10 +12,14 @@ const app = express();
 connectDb();
 connectCloudinary();
 
+console.log("Loading userRouter...");
 app.use(express.json());
 app.use(cors())
 
-app.use('/api/user', userRouter)
+app.use('/api/user', (req, res, next) => {
+    console.log("USER ROUTER:", req.method, req.originalUrl);
+    next();
+}, userRouter);
 app.use('/api/products', productRouter)
 app.use('/api/order', orderRouter)
 app.use('/api/cart', cartRouter)
@@ -23,12 +27,12 @@ app.use('/api/cart', cartRouter)
 
 const PORT = process.env.PORT || 5000
 
-app.get('/', (req,res)=>{
+app.get('/', (req, res) => {
     res.json({
         msg: "Server is running"
     })
 })
 
-app.listen(PORT,()=>{
+app.listen(PORT, () => {
     console.log(`server is running on port ${PORT}`);
 })

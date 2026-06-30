@@ -1,28 +1,60 @@
 import { useContext, useEffect, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
-import {useLocation} from 'react-router-dom'
+import { useLocation } from "react-router-dom";
 
 export default function SearchBar() {
   const { showSearch, setShowSearch, searchText, setSearchText } = useContext(ShopContext);
-  const [visible , setVisible] = useState(false);
+  const [visible, setVisible] = useState(false);
   const location = useLocation();
 
-  useEffect(()=>{
-    if(location.pathname.includes('collection')|| location.pathname.includes('/')){
-      setVisible(true)
-       setShowSearch(true);
-    }else{
-      setVisible(false)
-      setShowSearch(false)
+  useEffect(() => {
+    if (location.pathname.includes("collection") || location.pathname === "/") {
+      setVisible(true);
+      setShowSearch(true);
+    } else {
+      setVisible(false);
+      setShowSearch(false);
     }
-    
-  },[location])
+  }, [location]);
 
-  return showSearch && visible ? (<div className="mt-2 bg-gray-50 flex items-center p-2 gap-2 justify-center">
-    <div className="flex justify-center items-center gap-2 border rounded-xl w-3/4 sm:w-1/2">
-    <img className="pl-1 ml-1 w-5 h-5" onClick={()=> setShowSearch(false)} src="search_icon.png" alt="" />
-    <input className="w-full p-2 rounded-xl rounded-l-none " type="text" onChange={(e)=> {setSearchText(e.target.value); console.log()}} placeholder="Search Products" />
+  if (!showSearch || !visible) return null;
+
+  return (
+    <div className="bg-white border-b border-slate-100 py-3 px-4 animate-slideDown">
+      <div className="max-w-2xl mx-auto flex items-center gap-3">
+        <div className="flex-1 flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-full px-4 py-2.5 focus-within:border-indigo-400 focus-within:bg-white focus-within:ring-2 focus-within:ring-indigo-100 transition-all duration-200">
+          {/* Search Icon */}
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1 0 5.5 5.5a7.5 7.5 0 0 0 10.65 10.65z" />
+          </svg>
+          <input
+            className="flex-1 bg-transparent text-sm text-slate-800 placeholder-slate-400 outline-none"
+            type="text"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            placeholder="Search products, categories…"
+            autoFocus
+          />
+          {searchText && (
+            <button
+              onClick={() => setSearchText("")}
+              className="text-slate-400 hover:text-slate-600 transition-colors"
+              aria-label="Clear search"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
+        {/* Close */}
+        <button
+          onClick={() => setShowSearch(false)}
+          className="text-slate-500 hover:text-slate-800 text-sm font-medium px-4 py-2.5 rounded-full hover:bg-slate-100 transition-all duration-200"
+        >
+          Cancel
+        </button>
+      </div>
     </div>
-    <div onClick={()=> setShowSearch(false)} className="text-black w-7 flex justify-center items-center border p-1 cursor-pointer rounded-xl text-xl border-black transition-all duration-300 active:scale-90 active:shadow-inner active:bg-red-600 ">X</div>
-  </div>): null
+  );
 }

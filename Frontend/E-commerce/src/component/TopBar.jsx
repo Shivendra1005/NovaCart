@@ -1,157 +1,271 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faShoppingCart, faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { ShopContext } from "../context/ShopContext";
 
-export function TopBar({ icon }) {
-  const {
-    setShowSearch,
-    getCartCount,
-    token,
-    setToken,
-    setCartItem,
-  } = useContext(ShopContext);
+// Inline SVG icons to eliminate local file dependency
+const SearchIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1 0 5.5 5.5a7.5 7.5 0 0 0 10.65 10.65z" />
+  </svg>
+);
+
+const UserIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7z" />
+  </svg>
+);
+
+const CartIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.5 6h13M7 13L5.4 5M10 21a1 1 0 1 0 2 0 1 1 0 0 0-2 0zm8 0a1 1 0 1 0 2 0 1 1 0 0 0-2 0z" />
+  </svg>
+);
+
+const MenuIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+  </svg>
+);
+
+const XIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+  </svg>
+);
+
+const navLinks = [
+  { name: "Home",       path: "/" },
+  { name: "Collection", path: "/collection" },
+  { name: "About",      path: "/about" },
+  { name: "Contact",    path: "/contact" },
+];
+
+export function TopBar() {
+  const { setShowSearch, getCartCount, token, setToken, setCartItem } = useContext(ShopContext);
 
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
+
+  // Add shadow on scroll
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (!e.target.closest("#profile-menu-wrapper")) {
+        setProfileMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const logout = () => {
     localStorage.removeItem("token");
     setToken("");
     setCartItem({});
+    setProfileMenuOpen(false);
     navigate("/signin");
   };
 
   const goToAdmin = () => {
-    // Redirect to admin page
     window.location.href = "https://e-comm-woad-zeta.vercel.app/";
   };
 
+  const cartCount = getCartCount();
+
   return (
     <>
-      <div className="h-20 border-b border-gray-300 bg-white sticky top-0 z-50">
-        <div className="flex justify-between items-center h-full px-4">
+      {/* ── MAIN NAV ───────────────────────────────── */}
+      <header
+        className={`navbar-glass h-16 sticky top-0 z-50 transition-shadow duration-300 ${
+          scrolled ? "shadow-lg shadow-slate-200/60" : ""
+        }`}
+      >
+        <div className="max-w-7xl mx-auto h-full flex items-center justify-between px-4 sm:px-6 lg:px-8">
 
           {/* LOGO */}
-          <Link to="/" className="text-3xl font-bold text-gray-700">
-            E-comm
+          <Link
+            to="/"
+            className="flex items-center gap-2 group"
+            onClick={() => setMenuOpen(false)}
+          >
+            {/* SVG Logo Mark */}
+            <div className="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center shadow-md group-hover:bg-indigo-600 transition-colors duration-300">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5">
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <line x1="3" y1="6" x2="21" y2="6" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                <path d="M16 10a4 4 0 01-8 0" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <span
+              style={{ fontFamily: "'Playfair Display', serif" }}
+              className="text-xl font-bold text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors duration-300"
+            >
+              E-Comm
+            </span>
           </Link>
 
-          {/* DESKTOP NAV */}
-          <div className="hidden md:flex gap-6">
-            {["/", "/collection", "/about", "/contact"].map((path, i) => (
+          {/* DESKTOP NAV LINKS */}
+          <nav className="hidden md:flex items-center gap-1">
+            {navLinks.map((link) => (
               <NavLink
-                key={i}
-                to={path}
+                key={link.path}
+                to={link.path}
                 className={({ isActive }) =>
-                  isActive
-                    ? "text-blue-500 font-semibold text-xl"
-                    : "text-gray-700"
+                  `relative px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
+                    isActive
+                      ? "text-indigo-600 bg-indigo-50"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                  }`
                 }
               >
-                {path === "/" ? "Home" : path.slice(1)}
+                {link.name}
               </NavLink>
             ))}
-
-            {/* ADMIN BUTTON */}
+            {/* Admin Link */}
             <button
               onClick={goToAdmin}
-              className="text-black flex justify-center items-center bg-white px-3 cursor-pointer border rounded-2xl transition-all duration-200 active:bg-gray-200 active:scale-90"
+              className="ml-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-full hover:bg-indigo-700 transition-all duration-200 shadow-sm hover:shadow-indigo-200/60 hover:shadow-md"
             >
               Admin
             </button>
-          </div>
+          </nav>
 
           {/* RIGHT ICONS */}
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-2">
 
-            <img src={icon} className="h-5 w-5 cursor-pointer" onClick={() => { setShowSearch(true); navigate('/collection'); }} alt="" />
+            {/* Search */}
+            <button
+              onClick={() => { setShowSearch(true); navigate("/collection"); }}
+              className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all duration-200"
+              aria-label="Search"
+            >
+              <SearchIcon />
+            </button>
 
-            {/* PROFILE */}
-            <div className="relative">
-              <FontAwesomeIcon
-                icon={faUser}
-                className="w-5 cursor-pointer"
-                onClick={() => setProfileMenuOpen(prev => !prev)}
-              />
+            {/* Profile dropdown */}
+            <div className="relative" id="profile-menu-wrapper">
+              <button
+                onClick={() => setProfileMenuOpen((p) => !p)}
+                className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all duration-200"
+                aria-label="Profile"
+              >
+                <UserIcon />
+              </button>
 
               {profileMenuOpen && (
-                <div className="absolute right-0 mt-2 w-36 bg-white border rounded shadow-md z-50">
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-100 rounded-2xl shadow-xl shadow-slate-200/60 z-50 animate-slideDown overflow-hidden">
                   {token ? (
                     <>
-                      <Link to="/profile" className="block px-4 py-2 hover:bg-gray-100">
+                      <Link
+                        to="/profile"
+                        onClick={() => setProfileMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                      >
+                        <UserIcon />
                         My Profile
                       </Link>
-                      <p
-                        onClick={() => navigate("/orders")}
-                        className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                      <button
+                        onClick={() => { navigate("/orders"); setProfileMenuOpen(false); }}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 transition-colors text-left"
                       >
-                        Orders
-                      </p>
-                      <p
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        My Orders
+                      </button>
+                      <div className="border-t border-slate-100" />
+                      <button
                         onClick={logout}
-                        className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-500 hover:bg-red-50 transition-colors text-left"
                       >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
                         Logout
-                      </p>
+                      </button>
                     </>
                   ) : (
-                    <Link to="/signin" className="block px-4 py-2 hover:bg-gray-100">
-                      Login
+                    <Link
+                      to="/signin"
+                      onClick={() => setProfileMenuOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                    >
+                      Login / Sign up
                     </Link>
                   )}
                 </div>
               )}
             </div>
 
-            {/* CART */}
-            <Link to="/cart" className="relative">
-              <FontAwesomeIcon icon={faShoppingCart} className="w-5" />
-              <span className="absolute -right-2 -bottom-2 border bg-black text-white text-[13px] w-5 h-5 rounded-full flex items-center justify-center">
-                {getCartCount()}
-              </span>
+            {/* Cart */}
+            <Link
+              to="/cart"
+              className="relative p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all duration-200"
+              aria-label="Cart"
+            >
+              <CartIcon />
+              {cartCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-indigo-600 text-white text-[10px] font-bold w-4.5 h-4.5 rounded-full flex items-center justify-center leading-none min-w-[18px] min-h-[18px] px-1">
+                  {cartCount > 99 ? "99+" : cartCount}
+                </span>
+              )}
             </Link>
 
-            {/* MOBILE MENU */}
-            <div className="md:hidden">
-              <FontAwesomeIcon
-                icon={menuOpen ? faXmark : faBars}
-                className="w-6 cursor-pointer"
-                onClick={() => setMenuOpen(prev => !prev)}
-              />
-            </div>
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setMenuOpen((p) => !p)}
+              className="md:hidden p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all duration-200"
+              aria-label="Menu"
+            >
+              {menuOpen ? <XIcon /> : <MenuIcon />}
+            </button>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* MOBILE MENU */}
+      {/* ── MOBILE MENU ────────────────────────────── */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-b shadow-md">
-          {[
-            { name: "Home", path: "/" },
-            { name: "Collection", path: "/collection" },
-            { name: "About", path: "/about" },
-            { name: "Contact", path: "/contact" },
-          ].map((item, i) => (
-            <NavLink
-              key={i}
-              to={item.path}
-              onClick={() => setMenuOpen(false)}
-              className="block px-4 py-3 border-b hover:bg-gray-100"
-            >
-              {item.name}
-            </NavLink>
-          ))}
-
-          {/* ADMIN BUTTON for mobile menu */}
-          <button
-            onClick={goToAdmin}
-            className="block w-full text-left px-4 py-3 border-b bg-red-500 text-white hover:bg-red-600"
-          >
-            Admin
-          </button>
+        <div className="md:hidden fixed inset-0 z-40 pt-16 animate-slideDown">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/20"
+            onClick={() => setMenuOpen(false)}
+          />
+          {/* Menu Panel */}
+          <div className="relative bg-white border-b border-slate-100 shadow-xl">
+            <nav className="px-4 py-4 flex flex-col gap-1">
+              {navLinks.map((link) => (
+                <NavLink
+                  key={link.path}
+                  to={link.path}
+                  onClick={() => setMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `px-4 py-3 text-base font-medium rounded-xl transition-colors ${
+                      isActive
+                        ? "text-indigo-600 bg-indigo-50"
+                        : "text-slate-700 hover:bg-slate-50"
+                    }`
+                  }
+                >
+                  {link.name}
+                </NavLink>
+              ))}
+              <button
+                onClick={goToAdmin}
+                className="mt-2 px-4 py-3 text-base font-semibold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition-colors text-left"
+              >
+                Admin Panel
+              </button>
+            </nav>
+          </div>
         </div>
       )}
     </>

@@ -1,10 +1,13 @@
-const Title = ({text1,text2}) => {
+const Title = ({ text1, text2 }) => {
   return (
-    <div className='inline-flex gap-2 items-center mb-3'>
-      <p className='text-gray-500'>{text1} <span className='text-gray-700 font-medium'>{text2}</span></p>
-      <p className='w-8 sm:w-12 h-[1px] sm:h-[2px] bg-gray-700'></p>
+    <div className="flex items-center gap-3 mb-6">
+      <div className="w-1 h-8 bg-indigo-600 rounded-full" />
+      <h2 className="text-2xl font-bold text-slate-800" style={{ fontFamily: "'Playfair Display', serif" }}>
+        <span className="text-slate-400 font-normal">{text1} </span>
+        {text2}
+      </h2>
     </div>
-  )
-}
+  );
+};
 
-export default Title
+export default Title;

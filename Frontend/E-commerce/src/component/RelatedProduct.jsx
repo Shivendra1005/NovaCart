@@ -1,13 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
-import { ProductItem } from "./ProductItem"; // Assuming ProductItem component is used for displaying product cards
+import { ProductItem } from "./ProductItem";
 
 const RelatedProducts = ({ category, subCategory }) => {
   const { products } = useContext(ShopContext);
   const [relatedProducts, setRelatedProducts] = useState([]);
 
   useEffect(() => {
-    // Filter the products based on category and sub-category
     if (products.length > 0) {
       const filtered = products.filter(
         (product) =>
@@ -17,27 +16,35 @@ const RelatedProducts = ({ category, subCategory }) => {
     }
   }, [category, subCategory, products]);
 
+  if (relatedProducts.length === 0) return null;
+
   return (
-    <div className="mt-24">
-      <h2 className="text-3xl font-sans mb-6">Related Products</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 mt-10 lg:grid-cols-4 gap-6">
-        {relatedProducts.length > 0 ? (
-          relatedProducts.map((product) => (
+    <section className="mt-20">
+      {/* Section Header */}
+      <div className="text-center mb-10">
+        <p className="text-indigo-600 text-xs font-semibold tracking-widest uppercase mb-2">
+          — You Might Also Like —
+        </p>
+        <h2 className="section-title">Related Products</h2>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        {relatedProducts.map((product, index) => (
+          <div
+            key={product._id}
+            className="animate-fadeIn"
+            style={{ animationDelay: `${index * 60}ms`, animationFillMode: "both" }}
+          >
             <ProductItem
-              key={product._id}
               productId={product._id}
               name={product.name}
-              image={product.images[0]} // Assuming first image is the main image
+              image={product.images[0]}
               price={product.price}
             />
-          ))
-        ) : (
-          <p className="text-gray-500 col-span-full text-center">
-            No related products found.
-          </p>
-        )}
+          </div>
+        ))}
       </div>
-    </div>
+    </section>
   );
 };
 
