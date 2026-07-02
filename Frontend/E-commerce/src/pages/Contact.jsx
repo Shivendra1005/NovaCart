@@ -70,7 +70,7 @@ export function Contact() {
             <FaEnvelope className="text-red-500 text-2xl" />
             <div>
               <h3 className="font-semibold text-lg">Email</h3>
-              <p>contact@e-comm.com</p>
+              <p>contact@NovaCart.com</p>
             </div>
           </div>
 

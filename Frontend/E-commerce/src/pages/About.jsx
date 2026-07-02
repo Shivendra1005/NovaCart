@@ -11,15 +11,15 @@ export function About() {
       <section className="relative w-full h-[500px] bg-gray-900">
         <img
           src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=1400&q=80"
-          alt="E-comm clothing"
+          alt="NovaCart clothing"
           className="absolute inset-0 w-full h-full object-cover opacity-80"
         />
         <div className="relative z-10 flex flex-col justify-center items-center h-full text-center px-6">
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 drop-shadow-lg">
-            About E-comm
+            About NovaCart
           </h1>
           <p className="text-white md:text-lg max-w-3xl drop-shadow-md">
-            We create timeless, high-quality apparel that celebrates your authentic self. From daily moments to life’s milestones, E-comm is your trusted companion in style and comfort.
+            We create timeless, high-quality apparel that celebrates your authentic self. From daily moments to life’s milestones, NovaCart is your trusted companion in style and comfort.
           </p>
         </div>
       </section>
@@ -30,7 +30,7 @@ export function About() {
           <div>
             <h2 className="text-4xl font-bold mb-6">Our Story</h2>
             <p className="mb-4">
-              Founded with a mission to craft apparel that blends style, comfort, and authenticity, E-comm has grown into a brand trusted by thousands of customers. Each piece is designed to last, celebrate life’s moments, and reflect your unique style.
+              Founded with a mission to craft apparel that blends style, comfort, and authenticity, NovaCart has grown into a brand trusted by thousands of customers. Each piece is designed to last, celebrate life’s moments, and reflect your unique style.
             </p>
             <p>
               We are committed to sustainability, quality, and timeless designs that make your wardrobe both functional and memorable.
@@ -72,7 +72,7 @@ export function About() {
               <FaUsers className="text-5xl text-yellow-500" />
               <h3 className="text-xl font-semibold">Trusted by Customers</h3>
               <p className="text-gray-600">
-                Thousands of happy customers rely on E-comm for quality and style.
+                Thousands of happy customers rely on NovaCart for quality and style.
               </p>
             </div>
           </div>
